@@ -36,7 +36,6 @@ def predict(image):
     interpreter.set_tensor(input_details[0]['index'], img_preproc)
     interpreter.invoke()
     prob = interpreter.get_tensor(output_details[0]['index'])
-    print(prob)
     index = np.argmax(prob[0])
     label = labels[index]
     confidence = np.float32(prob[0, index]) / 255.
@@ -49,9 +48,10 @@ def handle(request):
     global labels
     global input_details
     global output_details
-    if request.content is None:
-        return 400
-    img = base64_to_PIL(request.content)
+    incoming = request.files.get('file')
+    if incoming is None:
+        return abort(400)
+    img = base64_to_PIL(incoming)
     if interpreter is None:
         config = configparser.ConfigParser()
         config.read('config')
