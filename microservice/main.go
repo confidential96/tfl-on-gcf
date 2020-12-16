@@ -1,32 +1,30 @@
 package main
+
 import (
-        "fmt"
-        "log"
-        "net/http"
-        "os"
+	"fmt"
+	"github.com/gin-gonic/gin"
+  "microservice/cloudbucket"
 )
 
 func main() {
-	http.HandleFunc("/", indexHandler)
+	fmt.Println("Hello World")
 
-	// [START setting_port]
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-		log.Printf("Defaulting to port %s", port)
-	}
+	r := gin.Default()
+	r.GET("/", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "TFLite microservice endpoints",
+		})
+	})
 
-	log.Printf("Listening on port %s", port)
-	if err := http.ListenAndServe(":"+port, nil); err != nil {
-		log.Fatal(err)
-	}
-	// [END setting_port]
+  r.POST("/queryImage", queryImage)
+	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
 
-func indexHandler(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		http.NotFound(w, r)
-		return
-	}
-	fmt.Fprint(w, "Hello, World!")
+func queryImage(c *gin.Context) {
+
+	var err error
+
+  key:= cloudbucket.HandleUploadtoCloudBucket(c)
+	ctx := appengine.NewContext(c.Request)
+
 }
