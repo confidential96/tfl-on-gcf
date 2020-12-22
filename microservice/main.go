@@ -4,12 +4,33 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
   "microservice/cloudbucket"
+	"microservice/cloudsql"
 )
+type Config struct {
+    Server struct {
+        Port string `yaml:"port"`
+        Host string `yaml:"host"`
+				Url  string `yaml:"url"`
+    } `yaml:"server"`
+}
 
 func main() {
   //gin server
 	r := gin.Default()
+  config := &Config{}
+	configFile, err := os.Open("config.yml")
+	// Init new YAML decode
+  d := yaml.NewDecoder(configFile)
 
+  // Start YAML decoding from file
+  if err := d.Decode(&config); err != nil {
+		return nil, err
+  }
+	//TODO use config
+  if err != nil {
+		log.Fatal(err)
+	}
+	defer config.Close()
   //simple test endpoint
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{
@@ -27,6 +48,7 @@ func main() {
 
 func queryImage(c *gin.Context) {
 
+  c.Request.ParseMultipartForm(10 << 20)
 	var err error
 	f, uploadedFile, err := c.Request.FormFile("file")
 	if err != nil {
@@ -37,11 +59,12 @@ func queryImage(c *gin.Context) {
 	}
 	defer f.close()
 
+	queryCF := CallCloudFunction(f, key)
+
   key:= cloudbucket.HandleUploadtoCloudBucket(c)
 
 	ctx := appengine.NewContext(c.Request)
 
-	queryCF := CallCloudFunction(f, key)
 }
 
 func CallCloudFunction(f File, key string) {

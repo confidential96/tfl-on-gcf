@@ -1,0 +1,4 @@
+server:
+  host: 127.0.0.1
+  port: 8080
+  url: https://us-west2-vikcraft.cloudfunctions.net/function-tfl-1

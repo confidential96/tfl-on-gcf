@@ -1,3 +1,4 @@
+package cloudsql
 
 import (
 	"bytes"
@@ -39,3 +40,26 @@ func DB() *sql.DB {
 
 	return conn
 }
+
+func createTable() error {
+	stmt := `CREATE TABLE IF NOT EXISTS inferences (
+			uuid  VARCHAR(36),
+			prediction     REAL
+			confidence     REAL
+		)`
+	_, err := db.Exec(stmt)
+	return err
+}
+
+func insertQueryResults(uuid string, prediction float, confidence float) error {
+	stmt := fmt.Sprintf(`INSERT INTO inferences (uuid, prediction, confidence)
+	  VALUES(%s, %f, %f, %b)
+		)`, uuid, prediction, confidence)
+	_, err := db.Exec(stmt)
+	return err
+}
+
+func getConfidenceLists(confidence float){
+	stmt := fmt.Sprintf(``)
+}
+func
