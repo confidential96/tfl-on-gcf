@@ -26,7 +26,7 @@ func main() {
   if err := d.Decode(&config); err != nil {
 		return nil, err
   }
-	//TODO use config
+
   if err != nil {
 		log.Fatal(err)
 	}

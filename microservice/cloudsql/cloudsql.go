@@ -53,7 +53,7 @@ func createTable() error {
 
 func insertQueryResults(uuid string, prediction float, confidence float) error {
 	stmt := fmt.Sprintf(`INSERT INTO inferences (uuid, prediction, confidence)
-	  VALUES(%s, %f, %f, %b)
+	  VALUES(%s, %f, %f)
 		)`, uuid, prediction, confidence)
 	_, err := db.Exec(stmt)
 	return err
